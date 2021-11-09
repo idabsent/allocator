@@ -1,0 +1,36 @@
+name: Build allocator for std library
+on:
+  push
+jobs:
+  buil-allocator:
+    runs-on: ubuntu-latest
+    steps:
+      - name: install package to machine which are for build
+        run:  sudo apt-get update && sudo apt-get install cmake
+      - uses: actions/checkout@v2
+      - name: create cmake files
+        run:  cmake ./ -DPATCH_VERSION=${{ github.run_number }}
+      - name: Build project to binary files
+        run:  cmake --build ./
+      - name: Build deb package
+        run: cmake --build ./ --target package
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:  
+          tag_name: v.${{ github.run_number }}
+          release_name: release-v.${{ github.run_number }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          asset_path: ./allocator-0.0.${{ github.run_number }}-Linux.deb
+          asset_name: allocator-0.0.${{ github.run_number }}-Linux.deb
+          asset_content_type: application/vnd.debian.binary-package

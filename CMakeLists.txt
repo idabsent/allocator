@@ -1,0 +1,28 @@
+cmake_minimum_required(VERSION 3.2)
+
+set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
+set(PROJECT_VERSION 0.0.${PATCH_VERSION})
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ./bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ./lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ./lib)
+
+project(allocator VERSION ${PROJECT_VERSION})
+
+set(EXECUTABLE  allocator.cpp)
+
+add_executable(main ${EXECUTABLE})
+
+set(CPACK_GENERATOR DEB)
+
+
+set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
+
+
+set(CPACK_PACKAGE_CONTACT example@example.com)
+
+include(CPack)
+
+target_link_libraries(main)
